@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-**Live Demo:** [Insert Your Vercel URL Here]
+**Live Demo:** [https://assetlibrary-ai-uvipul034-1103s-projects.vercel.app/]
 
 ## Core Features
 * **AI Vision Tagging:** Auto-generates alt-text and classification tags for uploaded images using OpenAI (`gpt-4o-mini`).
