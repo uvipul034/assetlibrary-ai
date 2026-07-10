@@ -202,3 +202,37 @@ CREATE POLICY "approval_logs_insert_manager_admin"
         AND profiles.role IN ('manager', 'admin')
     )
   );
+
+
+-- =========================
+-- 6. STORAGE BUCKET & POLICIES
+-- =========================
+-- Create the public assets bucket if it doesn't exist
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('assets_bucket', 'assets_bucket', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Allow public read access to the bucket
+CREATE POLICY "Public Access"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'assets_bucket');
+
+-- Allow authenticated users to upload files to the bucket
+CREATE POLICY "Authenticated users can upload assets"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    bucket_id = 'assets_bucket'
+    -- Optionally restrict path to user ID: AND (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- Allow users to update/delete their own files in the bucket
+CREATE POLICY "Users can update and delete own assets"
+  ON storage.objects FOR UPDATE
+  TO authenticated
+  USING (bucket_id = 'assets_bucket' AND owner = auth.uid());
+
+CREATE POLICY "Users can delete own assets"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'assets_bucket' AND owner = auth.uid());

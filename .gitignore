@@ -30,11 +30,20 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — NEVER commit secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+# .env.example is intentionally tracked (template only, no secrets)
 
 # vercel
 .vercel
+
+# supabase local
+supabase/.temp/
+supabase/.branches/
 
 # typescript
 *.tsbuildinfo
