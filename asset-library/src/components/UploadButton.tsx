@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
 export default function UploadButton() {
     const [isUploading, setIsUploading] = useState(false);
+    const router = useRouter();
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -12,54 +14,52 @@ export default function UploadButton() {
 
         setIsUploading(true);
 
-        // 1. Create a unique file name
+        // 1. Upload to Storage
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage.from('assets').upload(fileName, file);
 
-        // 2. Upload to Supabase Storage
-        const { data: uploadData, error } = await supabase.storage
-            .from('assets')
-            .upload(fileName, file);
-
-        if (error) {
-            alert('Error uploading: ' + error.message);
+        if (uploadError) {
+            alert('Error uploading: ' + uploadError.message);
             setIsUploading(false);
-        } else {
-            // 3. Get the public URL
-            const { data: publicData } = supabase.storage.from('assets').getPublicUrl(fileName);
-            const publicUrl = publicData.publicUrl;
+            return;
+        }
 
-            alert('Success! Image saved. Analyzing with AI...');
+        // 2. Get Public URL
+        const { data: publicData } = supabase.storage.from('assets').getPublicUrl(fileName);
+        const publicUrl = publicData.publicUrl;
 
-
-            // 4. Call our new AI route
-            fetch('/api/analyze-asset', {
+        // 3. Try AI (Fallback if it fails)
+        let finalTags = ["Untagged"];
+        try {
+            const res = await fetch('/api/analyze-asset', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ imageUrl: publicUrl }),
-            })
-                .then(async (res) => {
-                    const data = await res.json();
-                    // If the server sends an error status (like 500), force it to the .catch() block
-                    if (!res.ok) throw new Error(data.error || 'Something went wrong');
-                    return data;
-                })
-                .then((data) => {
-                    console.log('AI Tags generated:', data.tags);
-                    alert('AI Tags generated: ' + data.tags);
-                })
-                .catch((err) => {
-                    console.error('AI Error:', err);
-                    alert('AI Error: ' + err.message);
-                })
-                .finally(() => setIsUploading(false));
+            });
+            const data = await res.json();
+            if (res.ok && data.tags) {
+                // Assuming AI returns a comma-separated string like "cartoon, art, visual"
+                finalTags = data.tags.split(',').map((t: string) => t.trim());
+            }
+        } catch (err) {
+            console.warn('AI failed, using fallback tags');
         }
+
+        // 4. Save to Database
+        await supabase.from('assets').insert([
+            { url: publicUrl, tags: finalTags }
+        ]);
+
+        setIsUploading(false);
+        // Force the page to refresh and show the new image
+        router.refresh();
     };
 
     return (
         <div className="mb-8">
-            <label className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg cursor-pointer font-bold transition">
-                {isUploading ? 'Uploading & Analyzing...' : '+ Upload New Asset'}
+            <label className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full cursor-pointer font-bold transition shadow-lg hover:shadow-blue-500/50">
+                {isUploading ? 'Uploading...' : '+ Upload New Asset'}
                 <input type="file" className="hidden" onChange={handleUpload} disabled={isUploading} />
             </label>
         </div>
