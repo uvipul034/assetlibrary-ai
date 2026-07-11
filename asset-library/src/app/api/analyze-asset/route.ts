@@ -22,7 +22,9 @@ export async function POST(req: Request) {
 
     const tags = response.choices[0]?.message?.content || "";
     return NextResponse.json({ tags });
-  } catch (error) {
-    return NextResponse.json({ error: 'AI failed to tag' }, { status: 500 });
+  } catch (error: any) {
+    console.error("OPENAI EXCEPTION:", error);
+    // This will send the real OpenAI error message to your browser
+    return NextResponse.json({ error: error.message || 'Unknown AI error' }, { status: 500 });
   }
 }     
