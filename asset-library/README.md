@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-**Live Demo:** [https://assetlibrary-ai-uvipul034-1103s-projects.vercel.app/]
+**Live Demo:** [https://assetlibrary-ai.vercel.app/]
 
 ## Core Features
 * **AI Vision Tagging:** Auto-generates alt-text and classification tags for uploaded images using OpenAI (`gpt-4o-mini`).
@@ -11,7 +11,7 @@
 * **Audit Trail:** Soft-delete architecture with an append-only log for all approval status changes.
 * **UI/UX:** Keyboard-navigable grid, URL-synced search/filter state, and bulk actions.
 * **SEO:** Server-rendered JSON-LD structured data and dynamic OpenGraph image generation.
-
+The core AI tagging architecture is fully built and deployed via a Next.js API route using the OpenAI API. To protect my personal billing limits on the live public demo, the API currently utilizes a graceful fallback mechanism that tags new uploads as 'Untagged' if the quota is exceeded. The full AI implementation can be reviewed in src/app/api/analyze-asset/route.ts
 ## Tech Stack
 Next.js (App Router), TypeScript (Strict), Supabase (Postgres, Storage, Auth), Tailwind CSS, shadcn/ui, OpenAI.
 
