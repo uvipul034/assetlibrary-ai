@@ -1,4 +1,12 @@
+// 1. Import your actual upload component (adjust the path if needed)
+import UploadButton from "@/components/upload/UploadButton";
+// Import your AssetCard (adjust path if needed)
+import AssetCard from "@/components/asset/asset-card";
+
 export default function Dashboard() {
+  // Assuming you have logic here to fetch assets from your database
+  // const assets = ... 
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-8 md:p-12 lg:p-20">
 
@@ -8,21 +16,31 @@ export default function Dashboard() {
           Asset Library AI
         </h1>
 
-        {/* Replace your current simple button with this styled one */}
+        {/* 2. Replace the dummy button with your REAL UploadButton component */}
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-200"></div>
-          <button className="relative flex items-center gap-2 bg-gray-900 border border-gray-700 hover:border-gray-500 text-white font-medium py-3 px-8 rounded-full transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            Upload New Asset
-          </button>
+
+          {/* This renders YOUR upload logic, but keeps the glowing wrapper */}
+          <div className="relative">
+            <UploadButton />
+          </div>
         </div>
       </div>
 
-      {/* Grid Section - Adding 'gap-8' gives the cards breathing room */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
-        {/* Render your AssetCards here */}
+      {/* Grid Section & Empty State */}
+      <div className="max-w-7xl mx-auto">
+        {/* 3. Show a message if there are no assets yet */}
+        {/* Change 'false' to 'assets.length === 0' once your fetch logic is connected */}
+        {false ? (
+          <div className="text-center text-gray-500 mt-20 border-2 border-dashed border-gray-800 rounded-2xl p-12">
+            <p className="text-xl">No assets found.</p>
+            <p className="text-sm mt-2">Upload your first image to get started!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {/* Render your AssetCards here */}
+          </div>
+        )}
       </div>
 
     </div>
