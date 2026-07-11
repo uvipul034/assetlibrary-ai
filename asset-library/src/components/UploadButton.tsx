@@ -31,20 +31,26 @@ export default function UploadButton() {
 
             alert('Success! Image saved. Analyzing with AI...');
 
+
             // 4. Call our new AI route
             fetch('/api/analyze-asset', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ imageUrl: publicUrl }),
             })
-                .then((res) => res.json())
+                .then(async (res) => {
+                    const data = await res.json();
+                    // If the server sends an error status (like 500), force it to the .catch() block
+                    if (!res.ok) throw new Error(data.error || 'Something went wrong');
+                    return data;
+                })
                 .then((data) => {
                     console.log('AI Tags generated:', data.tags);
                     alert('AI Tags generated: ' + data.tags);
                 })
                 .catch((err) => {
                     console.error('AI Error:', err);
-                    alert('Upload successful, but AI failed to tag.');
+                    alert('AI Error: ' + err.message);
                 })
                 .finally(() => setIsUploading(false));
         }
