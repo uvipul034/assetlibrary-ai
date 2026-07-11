@@ -20,9 +20,9 @@ export async function POST(req: Request) {
       ],
     });
 
-    const tags = response.choices[0].message.content;
+    const tags = response.choices[0]?.message?.content || "";
     return NextResponse.json({ tags });
   } catch (error) {
     return NextResponse.json({ error: 'AI failed to tag' }, { status: 500 });
   }
-}
+}     

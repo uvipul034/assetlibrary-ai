@@ -3,9 +3,9 @@
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { Database } from "@/lib/supabase/types";
 
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+type Profile = any;
 
 export default function DashboardLayout({
   children,
@@ -58,8 +58,8 @@ export default function DashboardLayout({
                 {profile.email}
               </span>
               <span className={`demo-role-badge ${profile.role === 'admin' ? 'bg-destructive-bg text-destructive-foreground' :
-                  profile.role === 'manager' ? 'bg-warning-bg text-warning-foreground' :
-                    'bg-success-bg text-success-foreground'
+                profile.role === 'manager' ? 'bg-warning-bg text-warning-foreground' :
+                  'bg-success-bg text-success-foreground'
                 }`}>
                 {profile.role}
               </span>
