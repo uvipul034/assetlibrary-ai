@@ -1,5 +1,5 @@
 // 1. Import your actual upload component (adjust the path if needed)
-import UploadButton from "@/components/upload/UploadButton";
+import UploadButton from "@/components/UploadButton";
 // Import your AssetCard (adjust path if needed)
 import AssetCard from "@/components/asset/asset-card";
 
